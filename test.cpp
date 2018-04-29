@@ -17,9 +17,8 @@ int main() {
 		EXPECT_EQ(p1.get_location(0)[0],0)<< "kons 1 workin";
 		EXPECT_EQ(p1.get_location(0)[1],0) <<"kons 2 working";
 
-
 	}ENDM
-	TEST(player,attack){
+	TEST(player,attack) {
 		runner e1(0,3);
 		Player p1;
 		e1.attack(&p1);
@@ -27,52 +26,94 @@ int main() {
 		EXPECT_NE(p1.get_location(0)[1],0)<< "Jap its workin";
 	}ENDM
 
-	TEST(player,insert){
+	TEST(player,insert) {
 		Player p1;
 		MAP m;
 		p1.insert(&m);
-		for (int i =0;i < m.get_x();i++){
-			for( int k; k < m.get_y();k++){
-				if (m.get_gui()[i][k]!=0){
-					 SUCCEED();
+		for (int i =0;i < m.get_x();i++) {
+			for( int k; k < m.get_y();k++) {
+				if (m.get_gui()[i][k]!=0) {
+					SUCCEED();
+				}
 			}
+
 		}
-
-
-
-	}
 	}ENDM
+
+	TEST(player, move) {
+		Player p1;
+		p1.move(8);
+		EXPECT_EQ(p1.get_location(0)[0],0)<< "move loc 1 prob";
+		EXPECT_EQ(p1.get_location(0)[1],p1.get_speed()) <<"move loc 2 prob";
+
+	}ENDM
+
 	//ENEMY
-	TEST(enemy, multipleins){
+	TEST(enemy, multipleins) {
 		MAP m;
 		int count = 0;
 		runner nib(2,2);
-		nib.create_enemy(&m,2,&nib);
-		for (int i =0;i < m.get_x();i++){
-					for( int k; k < m.get_y();k++){
-						if (m.get_gui()[2][2]!=0&&m.get_gui()[i][k]!=0){
-							count++;
-							if (count==6){
-								SUCCEED();
-							}
+		nib.create_enemy(&m,2);
+		for (int i =0;i < m.get_x();i++) {
+			for( int k; k < m.get_y();k++) {
+				if (m.get_gui()[2][2]!=0&&m.get_gui()[i][k]!=0) {
+					count++;
+					if (count==6) {
+						SUCCEED();
 					}
 				}
+			}
+
+		}
 
 	}ENDM
 
-}
-
-
-
-	TEST(enemy,checker){
+	TEST(enemy,checker) {
 		Player p1;
 		MAP m;
-		runner nib(1,3);
-		nib.create_enemy(&m,2,&nib);
+		runner nib1(0,3);
+		runner niba(0,4);
+		nib1.nextenemy=&niba;
+		int res= nib1.check_other(&p1);
+		EXPECT_EQ(1,res)<<"wrong enemy checker";
+
+	}ENDM
+
+	TEST(enemy,move) {
+		Player p1;
+		runner e1(0,4);
+		MAP m;
+		e1.create_enemy(&m,2);
+		e1.move(&p1);
+		EXPECT_EQ(e1.get_location(0)[0],0)<< "move loc 1 prob";
+		EXPECT_EQ(e1.get_location(0)[1],1) <<"move loc 2 prob";
+
+	}ENDM
+
+// enemy subclasses
+	TEST(enemy,skill){
+		runner run(0,0);
+		tank tanke(0,1);
+		run.skill();
+		tanke.skill();
+		EXPECT_EQ(run.get_speed(),tanke.get_speed()*2);
+		EXPECT_EQ(tanke.get_hp(),run.get_hp()*2);
+
+
+	}ENDM
+//MAP
+	TEST(MAP,kons){
+		MAP m1;
+		MAP m(50,50);
+		EXPECT_EQ(50,m.get_x())<<"map 2 bad";
+		EXPECT_EQ(50,m.get_y())<<"map 2 bad";
+		EXPECT_EQ(500,m1.get_x())<<"map 1 bad";
+		EXPECT_EQ(500,m1.get_y())<<"map 1 bad";
 
 
 
 	}ENDM
+
 
 
 }

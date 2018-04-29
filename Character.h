@@ -52,11 +52,14 @@ public:
 		return speed;
 	}
 	;
+	void set_speed(int i) {
+		speed = i;
+		}
 	int get_code() {
 		return code;
 	}
-	void set_code(int i) {
-		code = i;
+	void set_hp(int i) {
+		hp = i;
 	}
 	;
 
@@ -64,7 +67,9 @@ public:
 		return hp;
 	}
 	;
-
+	void set_code(int i) {
+			code = i;
+		}
 	void insert(MAP *map, character* enemstarter);
 
 
@@ -93,11 +98,11 @@ class enemy: public character {
 	int Ai_type = 1; //1 aggresive 2 swarm
 public:
 	void insert(MAP *map);
-	void create_enemy(MAP *map, int type, enemy* ene);
-	void move(Player);
+	void create_enemy(MAP *map, int type);
+	void move(Player*);
 	enemy(size_t, size_t);
 	enemy* nextenemy = NULL;
-	int check_other(Player);
+	int check_other(Player*);
 	void Set_Ai_type();
 	void virtual skill() {throw "this shouldnt happen";};
 	virtual ~enemy();

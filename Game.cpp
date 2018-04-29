@@ -8,7 +8,7 @@
 #include <iostream>
 #include "Game.h"
 using namespace std;
-size_t MAP::defsize = 50;
+size_t MAP::defsize = 500;
 
 size_t MAP::resolution = 10;
 
@@ -18,20 +18,7 @@ void turn(MAP*, Player*p1);
 void insert_enem(MAP*, character* ene);
 
 
-/*
-template <typename obj>
-void insert(MAP *map, obj* enemstarter) {
-	obj* enemstart = enemstarter;
-	map->get_ui()[enemstart->get_location(1)[0]][enemstart->get_location(1)[1]] =
-			enemstart->get_code();
-	while (enemstart->nextenemy != NULL) {
-		enemstart =  enemstart->nextenemy;
-		map->get_ui()[enemstart->get_location(1)[0]][enemstart->get_location(1)[1]] =
-				enemstart->get_code();
 
-
-}
-}*/
 
 
 // MAP DEF
@@ -56,21 +43,25 @@ MAP::MAP() {
 	}
 }
 
-MAP::MAP(size_t x, size_t y) {
+MAP::MAP(size_t x1, size_t y1) {
 
-	sizey = y;
-	sizex = x;
+	sizey = y1;
+	sizex = x1;
 	gui = new char*[sizex];
 	ui = new int*[sizex / resolution];
 
-	for (size_t x = 0; x < defsize; x++) {
-		gui[x] = new char[sizey];
-		if (x % resolution == 0)
-			ui[x] = new int[sizey / resolution];
-		for (size_t y = 0; y < sizex; y++) {
-			gui[x][y] = '-';
-			if ((y % resolution == 0) && (x % resolution == 0))
-				ui[x / resolution][y / resolution] = 0;
+	for (size_t x3 = 0; x3 < defsize; x3++) {
+		sizey = y1;
+		sizex = x1;
+		int x2 = x3;
+		gui[x2] = new char[sizey];
+		if (x2 % resolution == 0)
+			ui[x2] = new int[(sizey / resolution)+1];
+		for (size_t y3 = 0; y3 < sizex; y3++) {
+			int y2 = y3;
+			gui[x2][y2] = '-';
+			if ((y2 % resolution == 0) && (x2 % resolution == 0))
+				ui[x2 / resolution][y2 / resolution] = 0;
 		}
 
 	}
@@ -126,7 +117,7 @@ void Game::play() {
 	p1.nextenemy = &nib;
 	p1.insert(&map);
 	p1.nextenemy->insert(&map);
-	nib.create_enemy(&map, 2, p1.nextenemy);
+	nib.create_enemy(&map, 2);
 
 
 	for (int x = 0; x < map.get_x() / map.get_res(); x++) {
