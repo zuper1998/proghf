@@ -8,6 +8,7 @@
 #include "Character.h"
 using namespace std;
 // PLAYER def
+
 int abs(int szam) {
 	return szam < 0 ? -szam : szam;
 
@@ -25,14 +26,14 @@ void character::attack(character* attacked) {
 
 }
 Player::Player() {
-	int* location_d = get_location(1);
-	location_d[0] = 0;
-	location_d[1] = 0;
+	get_location(1)[0] = 0;
+	get_location(1)[1] = 0;
 	player_name = "KOCDYR";
-	playerskill_type = 0;/*
-	 int hp = 100;
-	 int dmg = 3;
-	 int speed = 5;*/
+	playerskill_type = 0;
+	set_dmg(6);
+	set_hp(100);
+	set_speed(2);
+	set_code(1);
 
 }
 Player::Player(const char* name, int skillt, int lvl) {
@@ -40,19 +41,25 @@ Player::Player(const char* name, int skillt, int lvl) {
 	location_d[0] = 0;
 	location_d[1] = 0;
 	player_name = name;
-	playerskill_type = skillt;/*
-	 int hp = 100 * lvl;
-	 int dmg = 3 * lvl;
-	 int speed = 5 * lvl;*/
+	playerskill_type = skillt;
+	set_dmg(6 * lvl);
+	set_hp(100 * lvl);
+	set_speed(5 * lvl);
+	set_code(1 * lvl);
 }
 
 void Player::insert(MAP *map) {
+	if (this->get_location(1)[0] > map->get_y()) {
+		this->get_location(1)[0] = map->get_y() - 1;
+	} else if (this->get_location(1)[0] > map->get_x()) {
+		this->get_location(1)[0] = map->get_x() - 1;
+	}
 	Player* enemstart = this;
 	map->get_ui()[enemstart->get_location(1)[0]][enemstart->get_location(1)[1]] =
 			enemstart->get_code();
 }
 
-void Player::move(int direction) {
+void Player::move(int direction,MAP m) {
 	/*
 	 7  8  9
 	 4  5  6
@@ -103,8 +110,12 @@ void Player::move(int direction) {
 		break;
 
 	}
-	p[0] += get_speed() * dirmodx;
-	p[1] += get_speed() * dirmody;
+
+	int yx=m.get_x()/m.get_res()-1;
+	int xx=(m.get_y()/m.get_res()-1);
+
+	p[0] = abs(p[0] + get_speed() * dirmodx)%(yx);
+	p[1] = abs(p[1] + get_speed() * dirmody)%xx;
 
 }
 void Player::skill() {
@@ -124,7 +135,7 @@ void enemy::insert(MAP *map) {
 	}
 }
 
-void enemy::create_enemy(MAP *map, int type, enemy* enem) {
+void enemy::create_enemy(MAP *map, int type) {
 
 	/*
 	 0
@@ -132,7 +143,7 @@ void enemy::create_enemy(MAP *map, int type, enemy* enem) {
 	 2
 	 */
 	enemy* tmp;
-	tmp = enem;
+	tmp = this;
 
 	size_t x = (map->get_x() / map->get_res()) - 1;
 	size_t y = (map->get_y() / map->get_res()) - 1;
@@ -158,9 +169,11 @@ void enemy::create_enemy(MAP *map, int type, enemy* enem) {
 		break;
 
 	}
+	x = x < 0 ? -x : x;
+	y = y < 0 ? -y : y;
 
 	if (map->get_ui()[spawn_x][spawn_y] != 0) {
-		create_enemy(map, type, enem);
+		create_enemy(map, type);
 	}
 
 	while (tmp->nextenemy != NULL) {
@@ -178,7 +191,7 @@ void enemy::create_enemy(MAP *map, int type, enemy* enem) {
 		tmp->nextenemy = new_enemy2;
 	}
 
-	enem->insert(map);
+	this->insert(map);
 }
 
 enemy::enemy(size_t x, size_t y) {
@@ -190,72 +203,75 @@ enemy::~enemy() {
 	return;
 }
 
-int enemy::check_other(Player player) {//1 up - 2 down - 3 left - 4 down
-	int up, down, left, right = 0;
+int enemy::check_other(Player *player) { //1 up - 2 down - 3 left - 4 down
+	int up = 0, down = 0, left = 0, right = 0;
 
 	enemy* ep = this;
 
-	while (ep!=NULL){
+	while (ep != NULL) {
 
-
-	if (player.get_location(1)()[0] > get_location(1)()[0]) {
-		left++;
+		if (player->get_location(1)[0] > ep->get_location(1)[0]) {
+			left++;
+		}
+		if (player->get_location(1)[0] < ep->get_location(1)[0]) {
+			right++;
+		}
+		if (player->get_location(1)[1] > ep->get_location(1)[1]) {
+			down++;
+		}
+		if (player->get_location(1)[1] < ep->get_location(1)[1]) {
+			up++;
+		}
+		ep = ep->nextenemy;
 	}
-	if (player.get_location(1)()[0] < get_location(1)()[0]) {
-		right++;
-	}
-	if (player.get_location(1)()[1] > get_location(1)()[1]) {
-		up++;
-	}
-	if (player.get_location(1)()[1] < get_location(1)()[1]) {
-		down++;
-	}
-	ep = ep->nextenemy;
-	}
 
-	if(up > down) return up;
-	else return down;
-	if(right > left) return right;
-	else return left;
-
-
-
-	return 0;
-
+	if (up > down)
+		return 1;
+	else if (down > up)
+		return 2;
+	if (right > left)
+		return 3;
+	else
+		return 4;
 }
 
 void enemy::Set_Ai_type() {
 	Ai_type = 2;
 }
 
-void enemy::move(Player p1) {
+void enemy::move(Player* p1) {
 
-	if (p1.get_location(1)()[0] > get_location(1)()[0]) {
-		get_location(1)()[0] += speed;
+	enemy* ep = this;
 
-	}
-	if (p1.get_location(1)()[0] < get_location(1)()[0]) {
-		get_location(1)()[0] -= speed;
+	if (p1->get_location(1)[0] > ep->get_location(1)[0]) {
+		get_location(1)[0] = abs(get_location(1)[0]+get_speed());
 
 	}
-	if (p1.get_location(1)()[1] > get_location(1)()[1]) {
-		get_location(1)()[1] += speed;
+	if (p1->get_location(1)[0] < ep->get_location(1)[0]) {
+		get_location(1)[0] = abs(get_location(1)[0]-get_speed());
 
 	}
-	if (p1.get_location(1)()[1] < get_location(1)()[1]) {
-		get_location(1)()[1] -= speed;
+	if (p1->get_location(1)[1] > ep->get_location(1)[1]) {
+		get_location(1)[1] = abs(get_location(1)[1]+ get_speed());
 
 	}
+	if (p1->get_location(1)[1] < ep->get_location(1)[1]) {
+		get_location(1)[1] = abs(get_location(1)[1]-get_speed());
+
+	}
+	ep = ep->nextenemy;
 
 }
 
 //enemy subcalss def
 
 void runner::skill() {
+	this->set_speed(get_speed() * 2);
 	std::cout << "G O T A  G O  F A S T" << std::endl;
 }
 
 void tank::skill() {
+	this->set_hp(get_hp() * 2);
 	std::cout << "Me is B I G" << std::endl;
 }
 
