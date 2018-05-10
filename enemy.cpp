@@ -17,7 +17,7 @@ void character::move() {
 }
 
 character::~character() {
-return;
+	return;
 }
 
 //ENEMY def
@@ -107,7 +107,7 @@ enemy::enemy(size_t x, size_t y) {
 
 enemy::~enemy() {
 
-		delete[] get_location(0);
+	delete[] get_location(0);
 
 	return;
 }

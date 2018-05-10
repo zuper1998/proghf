@@ -72,6 +72,8 @@ int main() {
 		int count = 0;
 		runner nib(2,2);
 		nib.create_enemy(&m,2);
+		nib.create_enemy(&m,2);
+
 		for (int i =0;i < m.get_x();i++) {
 			for( int k=0; k < m.get_y();k++) {
 				if (m.get_gui()[2][2]!=0&&m.get_gui()[i][k]!=0) {
@@ -84,6 +86,7 @@ int main() {
 
 		}
 		nib.nextenemy->deleter();
+
 	}ENDM
 
 	TEST(enemy,checker) {
@@ -106,6 +109,7 @@ int main() {
 		EXPECT_NE(e1.get_location(0)[0],0)<< "move loc 1 prob";
 		EXPECT_NE(e1.get_location(0)[1],0) <<"move loc 2 prob";
 		e1.nextenemy->deleter();
+
 	}ENDM
 
 // enemy subclasses

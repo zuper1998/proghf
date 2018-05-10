@@ -32,7 +32,6 @@ public:
 	virtual void move();
 	;
 
-
 	int* get_location(int) {
 		return location;
 	}
@@ -92,12 +91,27 @@ public:
 
 class enemy: public character {
 public:
-	void deleter(){
-		while (this->nextenemy!=NULL){
-			this->nextenemy->deleter();
-
-			delete[] this;
+	void deleter() {
+		int count = 0;
+		int x =0 ;
+		enemy* enem  = this;
+		while (enem->nextenemy != NULL) {
+			enem = enem->nextenemy;
+			count ++;
 		}
+		enemy* e [count];
+		 enem  = this;
+				while (enem->nextenemy != NULL) {
+
+					enem = enem->nextenemy;
+					e[x] = enem;
+					x++;
+
+				}
+		for(int i=0;i<count;i++){
+			delete e[i];
+		}
+
 		return;
 	}
 	void attack(Player*, MAP*);
@@ -121,7 +135,7 @@ public:
 			enem = enem->nextenemy;
 		}
 	}
-	virtual ~enemy();
+	~enemy();
 };
 
 class runner: public enemy { //marked with 2 on ui
