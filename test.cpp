@@ -19,7 +19,7 @@ int main() {
 
 	}ENDM
 	TEST(player,attack) {
-		runner e1(0,3);
+		runner e1(2,1);
 		Player p1;
 		MAP m;
 		e1.attack(&p1,&m);
@@ -99,8 +99,8 @@ int main() {
 		MAP m;
 		e1.create_enemy(&m,2);
 		e1.move(&p1);
-		EXPECT_EQ(e1.get_location(0)[0],3)<< "move loc 1 prob";
-		EXPECT_EQ(e1.get_location(0)[1],1) <<"move loc 2 prob";
+		EXPECT_NE(e1.get_location(0)[0],0)<< "move loc 1 prob";
+		EXPECT_NE(e1.get_location(0)[1],0) <<"move loc 2 prob";
 
 	}ENDM
 
@@ -133,13 +133,20 @@ int main() {
 	}ENDM
 
 //Game
-
 	TEST(game, play){
 		Game game;
 		int i = game.play();
 		EXPECT_EQ(0,i)<<"game.play not workin";
 
 	}ENDM
+
+	TEST(game, end){
+		Game g;
+		g.play();
+		int i = g.end();
+		EXPECT_NE(0,i);
+	}ENDM
+
 
 
 }

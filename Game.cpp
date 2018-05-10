@@ -8,6 +8,7 @@
 #include <iostream>
 #include "Game.h"
 #include <fstream>
+#include "player.h"
 using namespace std;
 size_t MAP::defsize = 500;
 
@@ -58,81 +59,83 @@ void MAP::ins_gui() {
 				int k = (ui[x / resolution][y / resolution]);
 
 				if (k == 1) {
-				 filename	 = "hero.txt";
+					filename = "hero.txt";
 
+				} else if (k == 2) {
+					filename = "enemy1.txt";
 
-				}else if (k==2){
-				filename = "enemy1.txt";
-
-				}else if (k==3){
-				filename ="enemy2.txt";
-				}else {
-					filename ="";
+				} else if (k == 3) {
+					filename = "enemy2.txt";
+				} else {
+					filename = "";
 				}
 
-
-					std::ifstream infile(filename);
-					for (size_t ix = x; ix < x + 10; ix++) {
-						for (size_t iy = y; iy < y + 10; iy++) {
-							a ='-';
-							(infile >> a);
-							gui[iy][ix] = a;
-						}
+				std::ifstream infile(filename);
+				for (size_t ix = x; ix < x + 10; ix++) {
+					for (size_t iy = y; iy < y + 10; iy++) {
+						a = '-';
+						(infile >> a);
+						gui[iy][ix] = a;
 					}
 				}
-
 			}
 
 		}
 
 	}
 
-	void MAP::print_gui() {
-
-		for (size_t x = 0; x < this->sizex; x++) {
-			for (size_t y = 0; y < this->sizey; y++) {
-				std::cout << this->get_gui()[y][x];
-
-			}
-			std::cout << endl;
-		}
-
-		std::cout << "Movement: the corresponging key on the numpad" << endl
-		<< "skill: 0" << endl << "attack: 5" << endl
-		<< "your character code is 1" << endl;
-
-	}
-
-	void MAP::print_ui() {
-		for (int x = 0; x < this->get_x() / this->get_res(); x++) {
-			for (int y = 0; y < this->get_y() / this->get_res(); y++) {
-
-				std::cout << this->get_ui()[y][x] << " | ";
-
-			}
-			std::cout << endl;
-		}
-	}
-
-//Game def
-
-	Game::Game()
-	{
-		MAP map;
-	}
-
-
-
+}
 void MAP::reset() {
 	for (size_t x = 0; x < defsize; x++) {
 		for (size_t y = 0; y < sizex; y++) {
 			get_gui()[x][y] = '-';
 			if ((y % resolution == 0) && (x % resolution == 0))
-			get_ui()[x / resolution][y / resolution] = 0;
+				get_ui()[x / resolution][y / resolution] = 0;
 		}
 
 	}
 }
+
+void MAP::print_gui() {
+
+	for (size_t x = 0; x < this->sizex; x++) {
+		for (size_t y = 0; y < this->sizey; y++) {
+			std::cout << this->get_gui()[y][x];
+
+		}
+		std::cout << endl;
+	}
+
+	std::cout << "Movement: the corresponging key on the numpad" << endl
+			<< "skill: 0" << endl << "attack: 5" << endl
+			<< "your character code is 1" << endl;
+
+}
+
+void MAP::print_ui() {
+	for (int x = 0; x < this->get_x() / this->get_res(); x++) {
+		for (int y = 0; y < this->get_y() / this->get_res(); y++) {
+
+			std::cout << this->get_ui()[y][x] << " | ";
+
+		}
+		std::cout << endl;
+	}
+}
+
+//Game def
+
+Game::Game() {
+	MAP map;
+}
+
+
+int Game::end(){
+	std::cout<<"You survived "<<turns_taken<<" turns";
+	return turns_taken;
+}
+
+
 
 int Game::play() {
 	MAP map;
@@ -177,7 +180,7 @@ void turn(MAP* map, Player*p1) {
 		while (enem != NULL) {
 			if (abs(enem->get_location(1)[0] - p1->get_location(1)[0]) < 3
 					|| abs(enem->get_location(1)[1] - p1->get_location(1)[1])
-					< 3) {
+							< 3) {
 				p1->attack(enem, map);
 			}
 			enem = enem->nextenemy;

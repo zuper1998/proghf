@@ -86,7 +86,7 @@ public:
 	int playerskill_type;
 	enemy* nextenemy = NULL;
 	const char* player_name;
-	void attack(enemy*,MAP*);
+	void attack(enemy*, MAP*);
 	void move(int, MAP* m);
 	void skill(MAP*);
 	void insert(MAP *map);
@@ -100,7 +100,7 @@ public:
 class enemy: public character {
 	int Ai_type = 1; //1 aggresive 2 swarm
 public:
-	void attack(Player*,MAP*);
+	void attack(Player*, MAP*);
 	void insert(MAP *map);
 	void create_enemy(MAP *map, int type);
 	void move(Player*);
@@ -112,10 +112,10 @@ public:
 		throw "this shouldnt happen";
 	}
 	;
-	void garbage_collector(){
+	void garbage_collector() {
 		enemy * enem = this;
-		while (enem!=NULL){
-			if (enem->get_hp()<1){
+		while (enem != NULL) {
+			if (enem->get_hp() < 1) {
 				enem->set_code(0);
 				enem->set_dmg(0);
 			}
