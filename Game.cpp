@@ -40,13 +40,13 @@ MAP::MAP() {
 
 MAP::~MAP() {
 	for (size_t x = 0; x < sizex; x++) {
-		delete[] gui[x];
-		if (x % resolution == 0)
-			delete[] ui[x / resolution];
+		delete[] gui[x];}
+	for(size_t y = 0;y < sizex/resolution;y++){
+		delete[] ui[y];
 
 	}
-	delete ui;
-	delete gui;
+	delete[] ui;
+	delete[] gui;
 
 }
 
@@ -145,15 +145,17 @@ int Game::play() {
 	p1.insert(&map);
 	p1.nextenemy->insert(&map);
 	nib.create_enemy(&map, 2);
+#ifndef TESTING
+
 	map.ins_gui();
 	map.print_gui();
-	//map.print_ui();
-
+	map.print_ui();
+#endif
 	for (int x = 0; p1.get_hp() > 0; x++) {
 		turn(&map, &p1);
 		turntaken();
 	}
-
+	nib.nextenemy->deleter();
 	return 0;
 }
 
@@ -195,9 +197,11 @@ void turn(MAP* map, Player*p1) {
 	p1->nextenemy->move(p1);
 	p1->nextenemy->attack(p1, map);
 	p1->nextenemy->create_enemy(map, (rand() % 2) + 1);
-	//map->print_ui();
+#ifndef TESTING
+	map->print_ui();
 	map->ins_gui();
 	map->print_gui();
 	p1->nextenemy->garbage_collector();
+#endif
 }
 
