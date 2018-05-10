@@ -33,13 +33,16 @@ class MAP{
 	size_t sizey;
 public:
 MAP();
-MAP(size_t x,size_t y);
 ~MAP();
 int get_res(){return resolution;};
 int get_x(){return sizex;};
 int get_y(){return sizey;};
 int** get_ui(){return ui;};
 char** get_gui(){return gui;};
+void print_ui();
+void ins_gui();
+void print_gui();
+void reset();
 
 };
 
@@ -54,13 +57,13 @@ private:
 
 public:
 	Game();
-	Game(int x,int y,const char* load);
-	char* info();
 	char* draw();
-	void play();
-	void play(const char*);
+	int play();
+	int play(const char*);
 	char* menu(char**);
-
+	void turntaken(){
+		turns_taken+=0;
+	}
 
 
 

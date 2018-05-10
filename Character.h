@@ -10,9 +10,7 @@ class MAP;
 #include "Game.h"
 class enemy;
 
-
 class character {
-	char** skin;
 	int hp;
 	int dmg;
 	int speed;
@@ -26,14 +24,13 @@ public:
 		speed = 3;
 		hp = 50;
 		dmg = 3;
-		skin = new char*[1]; // place holder
+		//skin = new char*[1]; // place holder
 		location[0] = 0;
 		location[1] = 0;
 	}
 	;
 	virtual ~character()=0;
-	virtual void move() {
-	}
+	virtual void move();
 	;
 	int* get_location() {
 		int* temp_loc = new int[2];
@@ -47,16 +44,18 @@ public:
 		return location;
 	}
 	; //get the pointer to the location pointer
-	void attack(character*);
 	int get_speed() {
 		return speed;
 	}
 	;
+	void set_speed(int i) {
+		speed = i;
+	}
 	int get_code() {
 		return code;
 	}
-	void set_code(int i) {
-		code = i;
+	void set_hp(int i) {
+		hp = i;
 	}
 	;
 
@@ -65,22 +64,31 @@ public:
 	}
 	;
 
+	void set_code(int i) {
+		code = i;
+	}
 	void insert(MAP *map, character* enemstarter);
+	void set_dmg(int i) {
+		dmg = i;
+	}
 
-
+	int get_dmg() {
+		return dmg;
+	}
 
 };
 
 class Player: public character { // marked with 1 on the ui
+	int code = 1;
 public:
 	Player();
 	Player(const char*, int skillt, int lvl);
 	int playerskill_type;
 	enemy* nextenemy = NULL;
 	const char* player_name;
-	void attack(enemy*);
-	void move(int);
-	void skill();
+	void attack(enemy*,MAP*);
+	void move(int, MAP* m);
+	void skill(MAP*);
 	void insert(MAP *map);
 
 	~Player() {
@@ -92,14 +100,28 @@ public:
 class enemy: public character {
 	int Ai_type = 1; //1 aggresive 2 swarm
 public:
+	void attack(Player*,MAP*);
 	void insert(MAP *map);
-	void create_enemy(MAP *map, int type, enemy* ene);
-	void move(Player);
+	void create_enemy(MAP *map, int type);
+	void move(Player*);
 	enemy(size_t, size_t);
 	enemy* nextenemy = NULL;
-	int check_other(Player);
+	int check_other(Player*);
 	void Set_Ai_type();
-	void virtual skill() {throw "this shouldnt happen";};
+	void virtual skill() {
+		throw "this shouldnt happen";
+	}
+	;
+	void garbage_collector(){
+		enemy * enem = this;
+		while (enem!=NULL){
+			if (enem->get_hp()<1){
+				enem->set_code(0);
+				enem->set_dmg(0);
+			}
+			enem = enem->nextenemy;
+		}
+	}
 	virtual ~enemy();
 };
 
