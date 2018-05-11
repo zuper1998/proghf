@@ -8,8 +8,8 @@
 #include <iostream>
 #include "Game.h"
 #include "Character.h"
+
 using namespace std;
-#define MEMTRACE
 int main() {
 	//Player
 	TEST(player,kons){
@@ -22,23 +22,27 @@ int main() {
 		runner e1(2,1);
 		Player p1;
 		MAP m;
+
 		e1.attack(&p1,&m);
-		EXPECT_NE(p1.get_location()[0],0)<< "Mukodik attack";
+		EXPECT_NE(p1.get_location(0)[0],0)<< "Mukodik attack";
 		EXPECT_NE(p1.get_location(0)[1],0)<< "Jap its workin";
+
 	}ENDM
 
 	TEST(player,insert) {
 		Player p1;
 		MAP m;
+		bool suc = false;
 		p1.insert(&m);
 		for (int i =0;i < m.get_x();i++) {
 			for( int k; k < m.get_y();k++) {
 				if (m.get_gui()[i][k]!=0) {
-					SUCCEED();
+					suc = true;
 				}
 			}
 
 		}
+		if (suc) SUCCEED();
 	}ENDM
 
 	TEST(player,move){
@@ -68,8 +72,10 @@ int main() {
 		int count = 0;
 		runner nib(2,2);
 		nib.create_enemy(&m,2);
+		nib.create_enemy(&m,2);
+
 		for (int i =0;i < m.get_x();i++) {
-			for( int k; k < m.get_y();k++) {
+			for( int k=0; k < m.get_y();k++) {
 				if (m.get_gui()[2][2]!=0&&m.get_gui()[i][k]!=0) {
 					count++;
 					if (count==6) {
@@ -79,6 +85,7 @@ int main() {
 			}
 
 		}
+		nib.nextenemy->deleter();
 
 	}ENDM
 
@@ -101,6 +108,7 @@ int main() {
 		e1.move(&p1);
 		EXPECT_NE(e1.get_location(0)[0],0)<< "move loc 1 prob";
 		EXPECT_NE(e1.get_location(0)[1],0) <<"move loc 2 prob";
+		e1.nextenemy->deleter();
 
 	}ENDM
 
@@ -125,13 +133,13 @@ int main() {
 
 
 	}ENDM
-	TEST(MAP,gui-ui){
+/*	TEST(MAP,gui-ui){
 		MAP m;
 		m.print_gui();
 		m.print_ui();
 
 	}ENDM
-
+*/
 //Game
 	TEST(game, play){
 		Game game;

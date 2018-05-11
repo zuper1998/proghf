@@ -24,7 +24,6 @@ public:
 		speed = 3;
 		hp = 50;
 		dmg = 3;
-		//skin = new char*[1]; // place holder
 		location[0] = 0;
 		location[1] = 0;
 	}
@@ -32,13 +31,6 @@ public:
 	virtual ~character()=0;
 	virtual void move();
 	;
-	int* get_location() {
-		int* temp_loc = new int[2];
-		temp_loc[1] = location[1];
-		temp_loc[0] = location[0];
-		return temp_loc;
-	}
-	; //get copy of location array  WARNING: have to be deleted or memory leak
 
 	int* get_location(int) {
 		return location;
@@ -92,14 +84,36 @@ public:
 	void insert(MAP *map);
 
 	~Player() {
-		return;
+		delete[] get_location(0);
 	}
 	;
 };
 
 class enemy: public character {
-	int Ai_type = 1; //1 aggresive 2 swarm
 public:
+	void deleter() {
+		int count = 0;
+		int x =0 ;
+		enemy* enem  = this;
+		while (enem->nextenemy != NULL) {
+			enem = enem->nextenemy;
+			count ++;
+		}
+		enemy* e [count];
+		 enem  = this;
+				while (enem != NULL) {
+e[x] = enem;
+					enem = enem->nextenemy;
+					
+					x++;
+
+				}
+		for(int i=0;i<count;i++){
+			delete e[i];
+		}
+
+		return;
+	}
 	void attack(Player*, MAP*);
 	void insert(MAP *map);
 	void create_enemy(MAP *map, int type);
@@ -107,7 +121,6 @@ public:
 	enemy(size_t, size_t);
 	enemy* nextenemy = NULL;
 	int check_other(Player*);
-	void Set_Ai_type();
 	void virtual skill() {
 		throw "this shouldnt happen";
 	}
@@ -122,13 +135,13 @@ public:
 			enem = enem->nextenemy;
 		}
 	}
-	virtual ~enemy();
+	~enemy();
 };
 
 class runner: public enemy { //marked with 2 on ui
 
 public:
-	enemy* nextenemy = NULL;
+	//enemy* nextenemy = NULL;
 
 	runner(size_t x, size_t y) :
 			enemy(x, y) {

@@ -8,7 +8,7 @@
 #include "Character.h"
 using namespace std;
 // PLAYER def
-
+#define TESTING
 int abs(int szam) {
 	return szam < 0 ? -szam : szam;
 
@@ -17,7 +17,7 @@ void character::move() {
 }
 
 character::~character() {
-	delete[] location;
+	return;
 }
 
 //ENEMY def
@@ -26,9 +26,11 @@ void enemy::insert(MAP *map) {
 
 	while (enemstart->nextenemy != NULL) {
 		if (enemstart->get_location(1)[0] > 0
-				&& enemstart->get_location(1)[0] < (map->get_x()/map->get_res()-1)
+				&& enemstart->get_location(1)[0]
+						< (map->get_x() / map->get_res() - 1)
 				&& enemstart->get_location(1)[1] > 0
-				&& enemstart->get_location(1)[1] <(map->get_x()/map->get_res()-1)) {
+				&& enemstart->get_location(1)[1]
+						< (map->get_x() / map->get_res() - 1)) {
 
 			map->get_ui()[enemstart->get_location(1)[0]][enemstart->get_location(
 					1)[1]] = enemstart->get_code();
@@ -104,6 +106,9 @@ enemy::enemy(size_t x, size_t y) {
 }
 
 enemy::~enemy() {
+
+	delete[] get_location(0);
+
 	return;
 }
 
@@ -147,8 +152,8 @@ void enemy::attack(Player* attacked, MAP* m) {
 			int *p = attacked->get_location(1);
 			attacked->set_hp(attacked->get_hp() - this->get_dmg());
 			for (int i = 0; i < 2; i++)					//eltolja a damadottat
-				p[i] = abs(p[i] - get_location(1)[i] + get_speed()) %( m->get_x()
-						/ m->get_res()-1);
+				p[i] = abs(p[i] - get_location(1)[i] + get_speed())
+						% (m->get_x() / m->get_res() - 1);
 		}
 	}
 	if (this->nextenemy != NULL) {
@@ -158,10 +163,6 @@ void enemy::attack(Player* attacked, MAP* m) {
 	if (k == 1) {
 		this->skill();
 	}
-}
-
-void enemy::Set_Ai_type() {
-	Ai_type = 2;
 }
 
 void enemy::move(Player* p1) {
@@ -193,11 +194,16 @@ void enemy::move(Player* p1) {
 
 void runner::skill() {
 	this->set_speed(get_speed() * 2);
+#ifndef TESTING
 	std::cout << "G O T A  G O  F A S T" << std::endl;
+#endif
 }
 
 void tank::skill() {
 	this->set_hp(get_hp() * 2);
+#ifndef TESTING
+
 	std::cout << "Me is B I G" << std::endl;
+#endif
 }
 

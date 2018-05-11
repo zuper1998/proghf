@@ -61,6 +61,7 @@ public:
 		turns_taken += 1;
 	}
 	int end();
+
 };
 
 #endif /* GAME_H_ */
